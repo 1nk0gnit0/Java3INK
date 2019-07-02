@@ -13,7 +13,7 @@ public class Main {
             swapElements(intArray, 0, 4);
             System.out.println(Arrays.toString(intArray));
         }catch (Exception e){
-            System.out.println("Неверно задан диапозон");
+            System.out.println("Неверное значение");
         }
 
         System.out.println("Преобразуем массив ArrayList\n" + asList(intArray));
