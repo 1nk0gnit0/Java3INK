@@ -1,6 +1,7 @@
 package Lesson1.FruitBox;
 
 public class Fruit {
+
     private double weight;
 
     public double getWeight() {

@@ -21,7 +21,7 @@ public class Box <T extends Fruit> {
         else return box.get(0).getWeight() * getCount();
     }
 
-    public boolean compare(Box<?> o) {
+    public boolean compareFruit(Box<?> o) {
         return Math.abs(getWeight() - o.getWeight()) < 0.01;
     }
 
@@ -46,7 +46,7 @@ class BoxApp {
         System.out.println("Коробка 1. Количество яблок - " + fa.getCount() + ". Общий вес: " + fa.getWeight());
         System.out.println("Коробка 2. Количество апельсин - " + fo.getCount() + ". Общий вес: " + fo.getWeight());
 
-        if (fa.compare(fo)) System.out.println("Веса коробок 1 и 2 равны");
+        if (fa.compareFruit(fo)) System.out.println("Веса коробок 1 и 2 равны");
         else System.out.println("Веса коробок 1 и 2 не равны");
         System.out.println();
 
