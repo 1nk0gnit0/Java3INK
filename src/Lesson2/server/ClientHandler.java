@@ -46,6 +46,7 @@ public class ClientHandler {
                 if (str.equalsIgnoreCase("/end")) {
                     sendMsg("/serverclosed");
                     break;
+
                 }else if (str.startsWith("/w")){
                     String[] token = str.split(" ");
                     String string = " ";
@@ -53,9 +54,16 @@ public class ClientHandler {
                         if (message == token[1]) string = "<" + message + "> ";
                         else string += " " + message;
                     }
-                    System.out.println(nick + ": " + string);
                     sendMsg(nick + ": " + string);
                     server.prvMsg(token[1],string);
+
+                }else if(str.startsWith("/rename")){
+                    String[] token = str.split(" ");
+                    String string = " ";
+                    authService.changeNick(nick,token[1]);
+                    server.broadcast(nick + " изменил ник на " + token[1]);
+                    nick = token[1];
+
                 }else {
                     server.broadcast(nick + ": " + str);
                 }

@@ -9,6 +9,8 @@ public interface AuthService {
     void connect();
 
     void disconnect();
+
+    String changeNick(String oldNick, String newNick);
 }
 
 class AuthServiceImpl implements AuthService {
@@ -20,7 +22,7 @@ class AuthServiceImpl implements AuthService {
     @Override
     public void connect() {
         try {
-            connection = DriverManager.getConnection("jdbc:sqlite:db");
+            connection = DriverManager.getConnection("jdbc:sqlite:src/Lesson2/db");
             statement = connection.createStatement();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -52,5 +54,18 @@ class AuthServiceImpl implements AuthService {
         return null;
     }
 
+    @Override
+    public String changeNick(String oldNick, String newNick) {
+        try {
+            Statement stmt = connection.createStatement();
+            ResultSet resultSet = stmt.executeQuery("SELECT nick FROM main.users WHERE nick = '" + oldNick + "'");
+            if (resultSet.next()) {
+                stmt.executeUpdate("UPDATE main.users SET nick = '" + newNick + "' WHERE nick = '" + oldNick + "'");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }
 

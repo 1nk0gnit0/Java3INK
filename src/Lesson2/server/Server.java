@@ -32,7 +32,6 @@ class Server {
                 System.out.println("Клиент подключился!");
 
                 ClientHandler clientHandler = new ClientHandler(this, socket);
-                System.out.println(clientHandler.getNick());
             }
         } catch (IOException e) {
             e.printStackTrace();
