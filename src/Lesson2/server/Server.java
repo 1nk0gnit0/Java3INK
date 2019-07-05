@@ -24,7 +24,7 @@ class Server {
 
         try {
             authService.connect();
-            serverSocket = new ServerSocket(8182);
+            serverSocket = new ServerSocket(8181);
             System.out.println("Сервер запущен!");
             while (true) {
                 socket = serverSocket.accept();
@@ -46,9 +46,11 @@ class Server {
         }
     }
 
-    void broadcast(String message) {
+    void broadcast(ClientHandler from, String message) {
         for (ClientHandler clientHandler : peers) {
-            clientHandler.sendMsg(message);
+            if (!clientHandler.checkBlackList(from.getNick())) {
+                clientHandler.sendMsg(message);
+            }
         }
     }
 
@@ -62,9 +64,22 @@ class Server {
 
     void subscribe(ClientHandler clientHandler) {
         peers.add(clientHandler);
+        broadcastClientList();
     }
 
     void unsubscribe(ClientHandler clientHandler) {
         peers.remove(clientHandler);
+    }
+
+    void broadcastClientList() {
+        StringBuffer sb = new StringBuffer();
+        sb.append("/clientlist ");
+        for (ClientHandler clientHandler : peers) {
+            sb.append(clientHandler.getNick() + " ");
+        }
+        String out = sb.toString();
+        for (ClientHandler clientHandler : peers) {
+            clientHandler.sendMsg(out);
+        }
     }
 }
