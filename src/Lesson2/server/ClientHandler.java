@@ -1,6 +1,6 @@
 package Lesson2.server;
 
-import Lesson2.client.Controller;
+import Lesson2.client.History;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -36,6 +36,7 @@ public class ClientHandler {
             new Thread(() ->{
                 try {
                     autorization();
+                    sendMsg(History.loadHistory());
                     server.broadcast(this,getNick() + " подключился");
                     read();
                 } catch (IOException e) {
@@ -79,6 +80,7 @@ public class ClientHandler {
                     nick = token[1];
                     server.broadcastClientList();
                 }else {
+                    History.addHistory(nick + ": " + str + "\n");
                     server.broadcast(this,nick + ": " + str);
                 }
             } catch (IOException e) {
@@ -128,4 +130,6 @@ public class ClientHandler {
     boolean checkBlackList(String nick) {
         return blackList.contains(nick);
     }
+
+
 }
