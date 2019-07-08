@@ -9,11 +9,12 @@ public class Main {
         Integer[] intArray = {1, 2, 3, 4, 5};
         System.out.println("Есть массив\n" + Arrays.toString(intArray));
         System.out.println("Меняем местами первый и последний эллемент:");
+
         try {
             swapElements(intArray, 0, 4);
             System.out.println(Arrays.toString(intArray));
         }catch (Exception e){
-            System.out.println("Неверно задан диапозон");
+            System.out.println("Неверное значение");
         }
 
         System.out.println("Преобразуем массив ArrayList\n" + asList(intArray));
