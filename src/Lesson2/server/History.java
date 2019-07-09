@@ -1,4 +1,4 @@
-package Lesson2.client;
+package Lesson2.server;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -29,13 +29,13 @@ public class History {
         while ((tmp = br.readLine()) != null)
         {
             bandWidth.add(tmp);
-            if (bandWidth.size() == MAX_MESSAGES + 1)
+            if (bandWidth.size() > MAX_MESSAGES)
                 bandWidth.remove(0);
         }
         String res = "";
         fis.close();
         for (String line : bandWidth){
-            res = line + "\n";
+            res += line + "\n";
         }
         return res;
     }
