@@ -5,8 +5,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
-import Lesson2.server.ClientHandler;
-import com.sun.corba.se.spi.activation.Server;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
@@ -128,7 +126,7 @@ public class Controller {
             connect();
         }
         try {
-            out.writeUTF("/auth " + loginField.getText() + " " + passwordField.getText());
+            out.writeUTF("/auth " + loginField.getText().trim() + " " + passwordField.getText().trim());
             loginField.clear();
             passwordField.clear();
         } catch (IOException e) {
