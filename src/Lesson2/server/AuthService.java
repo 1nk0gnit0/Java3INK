@@ -40,6 +40,8 @@ class AuthServiceImpl implements AuthService {
 
     @Override
     public String getNick(String login, String pass) {
+        login = login.trim();
+        pass = pass.trim();
         String query = String.format("select nick from users\n"
                 + "where login = '%s'\n"
                 + "  and password = '%s'\n", login, pass);

@@ -1,9 +1,8 @@
 package Lesson2.server;
 
-import Lesson2.client.Controller;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.List;
@@ -36,6 +35,7 @@ public class ClientHandler {
             new Thread(() ->{
                 try {
                     autorization();
+                    sendMsg(History.loadHistory());
                     server.broadcast(this,getNick() + " подключился");
                     read();
                 } catch (IOException e) {
@@ -57,7 +57,7 @@ public class ClientHandler {
                     sendMsg("/serverclosed");
                     break;
 
-                }else if (str.startsWith("/w")){
+                } else if (str.startsWith("/w")) {
                     String[] token = str.split(" ");
                     String string = " ";
                     for (String message : token) {
@@ -65,21 +65,30 @@ public class ClientHandler {
                         else string += " " + message;
                     }
                     sendMsg(nick + ": " + string);
-                    server.prvMsg(token[1],string);
+                    server.prvMsg(token[1], string);
 
-                }else if((str.startsWith("/blacklist "))){
+                } else if ((str.startsWith("/blacklist "))) {
                     String[] tokens = str.split(" ");
                     blackList.add(tokens[1]);
                     sendMsg("Вы добавили пользователя с ником " + tokens[1] + " в черный список!");
 
-                }else if(str.startsWith("/rename")){
+                } else if (str.startsWith("/rename")) {
                     String[] token = str.split(" ");
-                    authService.changeNick(nick,token[1]);
-                    server.broadcast(this,nick + " изменил ник на " + token[1]);
+                    authService.changeNick(nick, token[1]);
+                    server.broadcast(this, nick + " изменил ник на " + token[1]);
                     nick = token[1];
                     server.broadcastClientList();
-                }else {
-                    server.broadcast(this,nick + ": " + str);
+                } else {
+                    String[] token = str.split(" ");
+                    String string = " ";
+                    for (int i = 0; i < token.length; i++) {
+                        if(Censored.censored(token[i])){
+                            token[i] = "[censored]";
+                        }
+                        string += " " + token[i];
+                    }
+                    History.addHistory(nick + ": " + string + "\n");
+                    server.broadcast(this, nick + ": " + string);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -128,4 +137,6 @@ public class ClientHandler {
     boolean checkBlackList(String nick) {
         return blackList.contains(nick);
     }
+
+
 }

@@ -2,13 +2,13 @@ package Lesson1.FruitBox;
 
 public class Fruit {
 
-    private double weight;
+    private double WEIGHT;
 
     public double getWeight() {
-        return weight;
+        return WEIGHT;
     }
 
-    public void setWeight(double weight) {
-        this.weight = weight;
+    public void setWeight(double WEIGHT) {
+        this.WEIGHT = WEIGHT;
     }
 }
