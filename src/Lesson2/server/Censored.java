@@ -2,14 +2,16 @@ package Lesson2.server;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.List;
 
-public class Censored {
-    private final static String FILE_NAME = "censored.txt";
-    private final static File file = new File(FILE_NAME);
+public interface Censored {
+    String FILE_NAME = "censored.txt";
+    File file = new File(FILE_NAME);
 
-    public static boolean censored(String message){
+    static boolean censored(String message){
         try {
-            ArrayList<String> censored = new ArrayList<>();
+
+            List<String> censored = new ArrayList<>();
             FileInputStream fis = new FileInputStream(file);
             BufferedReader br = new BufferedReader(new InputStreamReader(fis));
 
