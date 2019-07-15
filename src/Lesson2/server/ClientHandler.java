@@ -2,11 +2,10 @@ package Lesson2.server;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.*;
 
 public class ClientHandler {
 
@@ -32,18 +31,38 @@ public class ClientHandler {
             in = new DataInputStream(socket.getInputStream());
             this.authService = new AuthServiceImpl();
             this.blackList = new CopyOnWriteArrayList<>();
-            new Thread(() ->{
-                try {
-                    autorization();
-                    sendMsg(History.loadHistory());
-                    server.broadcast(this,getNick() + " подключился");
-                    read();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } finally {
-                    close();
+
+            ExecutorService service = Executors.newCachedThreadPool();
+            Future future = service.submit(new Callable<Object>(){
+                public Object call() {
+                    try {
+                        autorization();
+                        sendMsg(History.loadHistory());
+                        server.broadcast(ClientHandler.this,getNick() + " подключился");
+                        read();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } finally {
+                        close();
+                    }
+                    return "";
                 }
-            }).start();
+            });
+            service.shutdown();
+
+//            new Thread(() ->{
+//                try {
+//                    autorization();
+//                    sendMsg(History.loadHistory());
+//                    server.broadcast(this,getNick() + " подключился");
+//                    read();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                } finally {
+//                    close();
+//                }
+//            }).start();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
