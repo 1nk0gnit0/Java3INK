@@ -1,5 +1,6 @@
-package Lesson6;
+package Lesson6.Test;
 
+import Lesson6.Task;
 import org.junit.Assert;
 
 import java.util.Arrays;
