@@ -5,6 +5,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.logging.*;
 
 class StartServer {
 
@@ -15,6 +16,7 @@ class StartServer {
 
 class Server {
     private List<ClientHandler> peers;
+    private static final Logger logger = Logger.getLogger(Server.class.getName());
 
     Server(){
         AuthService authService = new AuthServiceImpl();
@@ -23,15 +25,26 @@ class Server {
         Socket socket = null;
 
         try {
+            Handler h = new FileHandler("Server.log", true);
+            h.setFormatter(new SimpleFormatter());
+            h.setLevel(Level.ALL);
+            logger.addHandler(h);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
             authService.connect();
             serverSocket = new ServerSocket(8181);
             System.out.println("Сервер запущен!");
+            logger.info("Сервер запущен!");
             while (true) {
                 socket = serverSocket.accept();
 
                 System.out.println("Клиент подключился!");
 
                 ClientHandler clientHandler = new ClientHandler(this, socket);
+                logger.info("Клиент подключился!");
             }
         } catch (IOException e) {
             e.printStackTrace();

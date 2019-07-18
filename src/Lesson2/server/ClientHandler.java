@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.List;
 import java.util.concurrent.*;
+import java.util.logging.*;
 
 public class ClientHandler {
 
@@ -17,6 +18,8 @@ public class ClientHandler {
     private String nick;
     private List<String> blackList;
     private boolean LogIn = false;
+    private static final Logger logger = Logger.getLogger(ClientHandler.class.getName());
+
 
 
     public String getNick() {
@@ -31,6 +34,10 @@ public class ClientHandler {
             in = new DataInputStream(socket.getInputStream());
             this.authService = new AuthServiceImpl();
             this.blackList = new CopyOnWriteArrayList<>();
+            Handler h = new FileHandler("ClientHandler.log", true);
+            h.setFormatter(new SimpleFormatter());
+            h.setLevel(Level.ALL);
+            logger.addHandler(h);
 
             ExecutorService service = Executors.newCachedThreadPool();
             Future future = service.submit(new Callable<Object>(){
@@ -39,6 +46,7 @@ public class ClientHandler {
                         autorization();
                         sendMsg(History.loadHistory());
                         server.broadcast(ClientHandler.this,getNick() + " подключился");
+                        logger.info(getNick() + " подключился");
                         read();
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -69,11 +77,13 @@ public class ClientHandler {
     }
 
     private void read() {
+        String msg = null;
         while (true) {
             try {
                 String str = in.readUTF();
                 if (str.equalsIgnoreCase("/end")) {
                     sendMsg("/serverclosed");
+                    msg = nick + " отключился";
                     break;
 
                 } else if (str.startsWith("/w")) {
@@ -84,19 +94,23 @@ public class ClientHandler {
                         else string += " " + message;
                     }
                     sendMsg(nick + ": " + string);
+                    msg = nick + " отправил личное соодщение " + token[1];
                     server.prvMsg(token[1], string);
 
                 } else if ((str.startsWith("/blacklist "))) {
                     String[] tokens = str.split(" ");
                     blackList.add(tokens[1]);
                     sendMsg("Вы добавили пользователя с ником " + tokens[1] + " в черный список!");
+                    msg = nick + " добавил пользователя " + tokens[1] + " в черный список!";
 
                 } else if (str.startsWith("/rename")) {
                     String[] token = str.split(" ");
                     authService.changeNick(nick, token[1]);
                     server.broadcast(this, nick + " изменил ник на " + token[1]);
+                    msg = nick + " изменил ник на " + token[1];
                     nick = token[1];
                     server.broadcastClientList();
+
                 } else {
                     String[] token = str.split(" ");
                     String string = " ";
@@ -108,10 +122,12 @@ public class ClientHandler {
                     }
                     History.addHistory(nick + ": " + string + "\n");
                     server.broadcast(this, nick + ": " + string);
+                    msg = nick + " отправил сообщение";
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            logger.info(msg);
         }
     }
 
