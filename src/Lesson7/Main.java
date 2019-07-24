@@ -3,13 +3,14 @@ package Lesson7;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) throws Exception {
         Class aClass = MyClass.class;
         Object obj = aClass.newInstance();
         Method[] methods = aClass.getDeclaredMethods();
-        ArrayList<Method> al = new ArrayList<>();
+        List<Method> al = new ArrayList<>();
 
         Method before = null;
         Method after = null;
